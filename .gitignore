@@ -1,0 +1,5 @@
+**/*.wav
+env/*
+__pycache__/*
+**/*.db
+**/_pycache_/*

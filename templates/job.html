@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Easy Genre Predictor</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+
+    <h1 style="text-align: center">Job Details</h1>
+    <table>
+          <tr>
+              <th>Id</th>
+              <th>Name</th>
+              <th>Added</th>
+              <th>True Label</th>
+              <th>Top1 Prediction</th>
+              <th>Top3 Prediction</th>
+          </tr>
+              <tr>
+                  <td>{{ detail.id}}</td>
+                  <td>{{ detail.name}}</td>
+                  <td>{{ detail.date_created.date() }}</td>
+                  <!-- todo: update to date and time in string -->
+                  <td>{{ detail.true_label}}</td>
+                  <td>{{ detail.top1}}</td>
+                  <td>{{ detail.top3}}</td>
+              </tr>
+      </table>
+      <div class="audio-container">
+      <audio src={{ url_for("static", filename = path) }} controls  >
+        </audio>
+      </div>
+        <div class="form">
+            <form action="/job/label/{{detail.id}}" method="POST">
+                <input type="text" name="label" id="label">
+                <input type="submit" value="Add True Label">
+            </form>
+        </div>
+        <h4 style="text-align: center">
+          <a href="/">Go Home</a></h4>
+</div>
+
+{% endblock %}

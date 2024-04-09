@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Easy Genre Predictor</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1 style="text-align: center">
+      <a href="/">Music Genre Prediction Tool</a></h1>
+    {% if history|length < 1 %}
+    <h4 style="text-align: center">There are no previous results. </h4>
+    {% else %}
+    <table>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Added</th>
+            <th>True Label</th>
+            <th>Top1 Prediction</th>
+            <th>Top3 Prediction</th>
+            <th></th>
+        </tr>
+        {% for item in history %}
+            <tr>
+                <td>{{ item.id}}</td>
+                <td>{{ item.name}}</td>
+                <td>{{ item.date_created.date() }}</td>
+                <!-- todo: update to date and time in string -->
+                <td>{{ item.true_label}}</td>
+                <td>{{ item.top1}}</td>
+                <td>{{ item.top3}}</td>
+                <td>
+                    <a href="/delete/{{item.id}}">Delete Entry</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    <div class="form">
+        <form action={{ url_for('job') }} method=post enctype=multipart/form-data>
+                <input type=file name=audio>
+                <input type=submit value="Start Job">
+        </form>
+    </div>
+</div>
+{% endblock %}
