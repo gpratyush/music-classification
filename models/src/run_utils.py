@@ -15,7 +15,7 @@ def load_model(location):
     clf = joblib.load(location)
     return classifiers.TraditionalModel(name = name, classifier=clf)
 
-def get_data(file, kind = "encode_audio"):
+def get_data(file, data_cache = {}, kind = "encode_audio"):
     if kind=="encode_audio":
         # need to process to create features
         segments = preprocessing.encode_audio(file, n_segments=1)

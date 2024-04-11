@@ -39,32 +39,35 @@ def get_data(location = "../../data/genres_original",
     if use_file is not None:
         # just use features
         data = pd.read_csv(use_file)
-        data = data.drop(columns = "filename")
+        if "filename" in data.columns:
+            data = data.drop(columns = "filename")
         labels = list(np.unique(data['label']))
         ids = np.arange(0, len(labels))
         data['label'] = data['label'].apply(lambda x: labels.index(x))
         y = data['label']
         X = data.drop(columns = "label")
         cache['le'] = labels
+        cache['features'] = 'standard'
+        
+        # train-test-split
+        
+        stratify = y if split_stratify else None
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_split,
+                                                        shuffle = split_shuffle, stratify=stratify,
+                                                        random_state=seed)
+
+        stratify = y_train if split_stratify else None
+        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=val_split,
+                                                        shuffle = split_shuffle, stratify=stratify,
+                                                        random_state=seed)
+
+        train_data = {"X": X_train, "y": y_train}
+        val_data = {"X": X_val, "y": y_val}
+        test_data = {"X": X_test, "y": y_test}
 
     else:
         # do the preprocess using audio
         pass
-
-    stratify = y if split_stratify else None
-    # train-test-split
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_split,
-                                                    shuffle = split_shuffle, stratify=stratify,
-                                                    random_state=seed)
-    
-    stratify = y_train if split_stratify else None
-    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=val_split,
-                                                    shuffle = split_shuffle, stratify=stratify,
-                                                    random_state=seed)
-
-    train_data = {"X": X_train, "y": y_train}
-    val_data = {"X": X_val, "y": y_val}
-    test_data = {"X": X_test, "y": y_test}
 
     return train_data, val_data, test_data, cache
 
@@ -96,21 +99,30 @@ def train(model,
     model.fit(X, y, n_folds = n_folds, grid_search = grid_search, metric = metric)
 
     # save model
-    folder = f"{save_location}/{model.name}"
-    os.makedirs(folder, exist_ok=True)
-    joblib.dump(model.classifier, f"{folder}/classifier.joblib")
-    if model.search is not None:
-        # save cv_results
-        with open(f'{folder}/cv_results.pkl', 'wb') as f:
-            pickle.dump(model.search.cv_results_, f)
+    if len(save_location)>0:
+        folder = f"{save_location}/{model.name}"
+        os.makedirs(folder, exist_ok=True)
+        joblib.dump(model.classifier, f"{folder}/classifier.joblib")
+        if model.search is not None:
+            # save cv_results
+            with open(f'{folder}/cv_results.pkl', 'wb') as f:
+                pickle.dump(model.search.cv_results_, f)
 
-    if len(data_cache)>0:
-        with open(f'{folder}/data_cache.pkl', 'wb') as f:
-            pickle.dump(data_cache, f)
-
+        if len(data_cache)>0:
+            with open(f'{folder}/data_cache.pkl', 'wb') as f:
+                pickle.dump(data_cache, f)
+    
     # evaluate --> if val data available (i.e. no CV), evaluate on that, else use test data
     y_pred = model.predict(X_test)
     lis = np.unique(y_test)
     if "le" in data_cache:
         lis = [data_cache['le'][i] for i in lis]
-    accuracy = evaluate.classification_metrics(y_test, y_pred, lis = lis, location=folder)
+    results = evaluate.classification_metrics(y_test, y_pred, lis = lis, location=folder)
+    model.results = results
+    
+    # save test-results
+    if len(save_location)>0:               
+        with open(f'{folder}/test_results.pkl', 'wb') as f:
+            pickle.dump(results, f)
+    
+    return model
