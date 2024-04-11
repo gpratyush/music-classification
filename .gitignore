@@ -3,3 +3,7 @@ env/*
 __pycache__/*
 **/*.db
 **/_pycache_/*
+data/*
+**/**/__pycache__/*
+**/*.joblib
+**/*.pkl

@@ -2,7 +2,7 @@ from flask import Flask, flash, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
-from model import run_model
+from models.src import run_model
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = './static/audio'
@@ -29,8 +29,8 @@ class Result(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f"{id} {true_label} {top1} {top3} {date_created}"
-
+        return f"" #{id} {true_label} {top1} {top3} {date_created}"
+    
 with app.app_context():
     db.create_all()
 
@@ -76,7 +76,7 @@ def job():
 
         filename = secure_filename(query.filename)
         query.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        prediction = run_model.run(query)
+        prediction = run_model.run(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         ## TODO: use threading to make this run while intermediate page displays
         run_detail = Result(name = filename,
                             top1 = prediction[0],
@@ -88,7 +88,7 @@ def job():
             return render_template('job.html', detail = run_detail,
                                     path = NON_STATIC_PATH+"/"+filename)
         except Exception as e:
-            return f'{e} There was an displaying the job'
+            return f'{e} There was an error displaying the job'
     else:
         id = int(request.args.get("id"))
         run = Result.query.get_or_404(id)
