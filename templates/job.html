@@ -27,7 +27,10 @@
                   <td>{{ detail.top3}}</td>
               </tr>
       </table>
-      <div class="audio-container">
+      
+    <h3 style="text-align: center"> Audio </h3>
+    
+    <div class="audio-container">
       <audio src={{ url_for("static", filename = path) }} controls  >
         </audio>
       </div>
@@ -37,8 +40,19 @@
                 <input type="submit" value="Add True Label">
             </form>
         </div>
+    
+    <h3 style="text-align: center"> Features </h3>
+    <div class="img-container">
+    {% for feature in features[:2] %}
+        <img src={{ url_for("static", filename = feature) }} alt="Feature">
+    {% endfor %}
+    </div>
+    <div class="img-container">
+    {% for feature in features[2:] %}
+        <img src={{ url_for("static", filename = feature) }} alt="Feature">
+    {% endfor %}
+    </div>
         <h4 style="text-align: center">
           <a href="/">Go Home</a></h4>
-</div>
 
 {% endblock %}

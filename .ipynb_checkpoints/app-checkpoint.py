@@ -3,7 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
 from models.src import run_model
+from models.src import visualize
 from werkzeug.utils import secure_filename
+import librosa
 # check
 
 UPLOAD_FOLDER = './static/audio'
@@ -76,8 +78,24 @@ def job():
             return redirect('/')
 
         filename = secure_filename(query.filename)
-        query.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        prediction = run_model.run(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        loc = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        query.save(loc)
+        audio, sr = librosa.load(loc)
+        
+        save_location = os.path.join(app.config['UPLOAD_FOLDER'], f"../image")
+        
+        # features
+        features = []
+        features.append(visualize.harmonics_and_perceptrual(audio, sr, save_location,filename))
+        features.append(visualize.mel_spectogram(audio, sr, save_location,filename))
+        features.append(visualize.chroma_stft(audio, sr, save_location,filename))
+        
+        features = [i.split("static/")[1] for i in features]
+        
+        # prediction
+        prediction = run_model.run(loc)
+        
+        
         ## TODO: use threading to make this run while intermediate page displays
         run_detail = Result(name = filename,
                             top1 = prediction[0],
@@ -87,7 +105,7 @@ def job():
             db.session.add(run_detail)
             db.session.commit()
             return render_template('job.html', detail = run_detail,
-                                    path = NON_STATIC_PATH+"/"+filename)
+                                    path = NON_STATIC_PATH+"/"+filename, features = features)
         except Exception as e:
             return f'{e} There was an error displaying the job'
     else:

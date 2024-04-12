@@ -8,9 +8,9 @@ import pickle
 
 
 def run(file, 
-        location = "models/output/HGBC_run1_30sec",
-        model_location = f"{location}/classifier.joblib",
-        data_cache_location = f"{location}/data_cache.pkl"):
+        location = "models/output/HistGradientBoostingClassifier_30sec",
+        model_location = f"models/output/HistGradientBoostingClassifier_30sec/classifier.joblib",
+        data_cache_location = f"models/output/HistGradientBoostingClassifier_30sec/data_cache.pkl"):
     
     model = run_utils.load_model(model_location)
     with open(data_cache_location, 'rb') as f:

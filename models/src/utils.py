@@ -1,5 +1,10 @@
 import pandas as pd
 import numpy as np
+import random
+
+def tts(files, split_stratify, split_shuffle, train_split, test_split):
+    labels = [i.split("/")[-2] for i in files]
+    
 
 def explode(df, lst_cols, fill_value='', preserve_index=False):
     # make sure `lst_cols` is list-alike

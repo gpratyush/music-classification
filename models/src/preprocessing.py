@@ -1,4 +1,50 @@
 import librosa
+import glob
+import random
+import tensorflow as tf
+import tensorflow_io as tfio
+import numpy as np
+import pandas as pd
+
+LABEL_DICTIONARY = ['blues', 'classical', 'country','disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock']
+LABEL_DICTIONARY = {i: idx for idx, i in enumerate(LABEL_DICTIONARY)}
+SAMPLE_RATE = 22050
+
+def path_to_spectogram(path):
+    try:
+        path = path.numpy().decode("utf-8")
+        wave, sr = librosa.load(path, sr=SAMPLE_RATE)
+        n_fft=2048
+        hop_length=512
+        img = librosa.feature.melspectrogram(y=wave,sr = SAMPLE_RATE, n_fft = n_fft, hop_length = hop_length)
+        img = np.expand_dims(img, axis = -1)
+        label = path.split("/")[-2]
+        label = LABEL_DICTIONARY[label]
+        return img, label
+    except Exception as e:
+        print(e)
+        return np.zeros((2,2)), -1
+
+def path_to_audio(path):
+    try:
+        path = path.numpy().decode("utf-8")
+        wave = tfio.audio.AudioIOTensor(path).to_tensor()
+        wave = tf.cast(wave, tf.float32) / 32768.0
+        wave = tf.squeeze(wave, axis = -1) 
+        label = path.split(".")[0]
+        label = LABEL_DICTIONARY[label]
+        return wave, label
+    except Exception as e:
+        print(e)
+        return path
+    
+def parse_function(path):
+    [out, label] = tf.py_function(path_to_spectogram, [path], [tf.float32, tf.int32])
+    return out, label
+    
+def parse_function_v0(path):
+    [out, label] = tf.py_function(path_to_audio, [path], [tf.float32, tf.int32])
+    return out, label
 
 def encode_audio(path, n_segments):
   num_mfcc=20

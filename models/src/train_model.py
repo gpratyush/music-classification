@@ -17,6 +17,7 @@ def train(model_config = {
                    "seed": 2024, 
                    },
           train_config = {
+                      "model_type": "traditional",
                     "grid_search": {}, #'max_leaf_nodes': [30, 60, 120]},
                     "n_folds": 5, 
                     "metric": ['f1_macro', 'accuracy'], 
