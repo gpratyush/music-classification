@@ -20,6 +20,17 @@ table {
     width: 100%;
 }
 
+dataframe, td, th {
+  margin-left: auto;
+  margin-right: auto;
+    border: 1px solid #aaa;
+}
+
+dataframe {
+    border-collapse: collapse;
+    width: 100%;
+}
+
 th {
     height: 30px;
 }

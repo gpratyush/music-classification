@@ -1,0 +1,9 @@
+,model,accuracy,f1-macro,worst-performing-label,best-performing-label
+1,HistGradientBoostingClassifier,0.8333333333333334,0.8301452612634155,rock,classical
+3,RandomForestClassifier,0.82,0.8164955235922976,reggae,classical
+7,DecisionTreeClassifier,0.6733333333333333,0.6731452371158253,rock,classical
+0,GaussianNB,0.44,0.40491635212078564,country,classical
+2,AdaBoostClassifier,0.3933333333333333,0.36243732390316835,pop,classical
+6,SVC,0.2866666666666667,0.2263985200585012,blues,classical
+4,KNeighborsClassifier,0.28,0.2682547056861939,rock,classical
+5,MLPClassifier,0.24666666666666667,0.19729602765981435,country,classical

@@ -14,8 +14,8 @@
               <th>Name</th>
               <th>Added</th>
               <th>True Label</th>
-              <th>Top1 Prediction</th>
-              <th>Top3 Prediction</th>
+              <th>Model Used</th>
+              <th>Prediction</th>
           </tr>
               <tr>
                   <td>{{ detail.id}}</td>
@@ -23,8 +23,8 @@
                   <td>{{ detail.date_created.date() }}</td>
                   <!-- todo: update to date and time in string -->
                   <td>{{ detail.true_label}}</td>
+                  <td>{{ detail.model_used}}</td>
                   <td>{{ detail.top1}}</td>
-                  <td>{{ detail.top3}}</td>
               </tr>
       </table>
       

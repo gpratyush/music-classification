@@ -38,7 +38,7 @@ class TraditionalModel:
         if n_folds is not None:
             # CV
             search = GridSearchCV(self.classifier, grid_search,
-                              scoring = metric, refit='accuracy', cv = n_folds)
+                              scoring = metric, refit='accuracy', cv = n_folds, n_jobs = 6)
             search.fit(X, y)
             self.search = search
             self.classifier = search.best_estimator_

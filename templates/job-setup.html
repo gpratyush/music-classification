@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Easy Genre Predictor</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+
+    <h1 style="text-align: center">Choose Model</h1>
+    {{test_results|safe}}
+    <h3 style="text-align: center"> Audio </h3>
+    
+    <div class="audio-container">
+      <audio src={{ url_for("static", filename = path) }} controls  >
+        </audio>
+      </div>
+    
+    </div>
+        <h4 style="text-align: center">
+          <a href="/">Go Home</a></h4>
+
+{% endblock %}
